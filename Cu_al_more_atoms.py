@@ -22,7 +22,11 @@ def the_parameter_changer(start_iteration, end_iteration, increment, is_ec, is_k
         if is_lat_const:
             b = k/200 # divide by 2 and by 100
 
-        bulk = Atoms('Cu',cell=[[0, b, b],[b, 0, b],[b, b, 0]], pbc=True)
+
+        bulk = Atoms([Atom('Cu', (0, 0, 0))],
+                      cell=np.array([[b, b, 0.0],
+                                               [0.0, b, b],
+                                               [b, 0.0, b]]), pbc = True).repeat((1, 2, 1))
 
         #view(bulk)
         if is_ec:
@@ -78,16 +82,11 @@ def plot_changing_param_vs_energy(start_iteration, end_iteration, increment, is_
 
     plt.xlabel(x_label)
     plt.ylabel('Energy, eV')
-    my_fig.savefig(x_label, bbox_inches='tight')
+    #my_fig.savefig(x_label, bbox_inches='tight')
     plt.show()
 
 #plot_changing_param_vs_energy(350,380,5,False,False,False,True)
 #plot_changing_param_vs_energy(2,12,1,False,True,False,False)
-#plot_changing_param_vs_energy(1,100,15,False,False,True)
 
-a = 3.61
-atoms = Atoms([Atom('Cu', (0, 0, 0))],
-              cell=0.5 * a * np.array([[1.0, 1.0, 0.0],
-                                       [0.0, 1.0, 1.0],
-                                       [1.0, 0.0, 1.0]])).repeat((1, 2, 1))
-view(atoms)
+
+plot_changing_param_vs_energy(300,1000,150,True,False,False,False)
