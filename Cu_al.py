@@ -1,9 +1,10 @@
 """Bulk Cu(fcc) test"""
 from __future__ import print_function
-from ase import Atoms
+from ase import Atoms, Atom
 from ase.visualize import view
 from gpaw import GPAW, PW, FermiDirac
 import matplotlib.pyplot as plt
+import numpy as np
 
 def the_parameter_changer(start_iteration, end_iteration, increment, is_ec, is_kpts, is_smear, is_lat_const):
 
@@ -80,6 +81,13 @@ def plot_changing_param_vs_energy(start_iteration, end_iteration, increment, is_
     my_fig.savefig(x_label, bbox_inches='tight')
     plt.show()
 
-plot_changing_param_vs_energy(350,380,5,False,False,False,True)
+#plot_changing_param_vs_energy(350,380,5,False,False,False,True)
 #plot_changing_param_vs_energy(2,12,1,False,True,False,False)
 #plot_changing_param_vs_energy(1,100,15,False,False,True)
+
+a = 3.61
+atoms = Atoms([Atom('Cu', (0, 0, 0))],
+              cell=0.5 * a * np.array([[1.0, 1.0, 0.0],
+                                       [0.0, 1.0, 1.0],
+                                       [1.0, 0.0, 1.0]])).repeat((2, 2, 2), pbc=True)
+view(atoms)
