@@ -72,7 +72,7 @@ def plot_changing_param_vs_energy(start_iteration, end_iteration, increment, is_
         x_label = "Lattice constant"
 
     my_fig = plt.figure(0)
-
+    energies = [i/2 for i in energies]
     if not is_lat_const:
         plt.semilogx(changing_parameter, energies)
         plt.semilogx(changing_parameter, energies,'*')
@@ -82,11 +82,11 @@ def plot_changing_param_vs_energy(start_iteration, end_iteration, increment, is_
 
     plt.xlabel(x_label)
     plt.ylabel('Energy, eV')
-    #my_fig.savefig(x_label, bbox_inches='tight')
+    my_fig.savefig(x_label + '_two_atoms', bbox_inches='tight')
     plt.show()
 
 #plot_changing_param_vs_energy(350,380,5,False,False,False,True)
 #plot_changing_param_vs_energy(2,12,1,False,True,False,False)
 
 
-plot_changing_param_vs_energy(300,1000,150,True,False,False,False)
+plot_changing_param_vs_energy(2,9,1,False,True,False,False)
