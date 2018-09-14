@@ -1,0 +1,34 @@
+
+
+- nbands, This parameter determines how many bands are included in the calculation for each spin. For example,
+for spin-unpolarized system with 10 valence electrons nbands=5 would include all the occupied states.
+In 10 valence electron spin-polarized system with magnetic moment of 2 a minimum of
+nbands=6 is needed (6 occupied bands for spin-up, 4 occupied bands and 2 empty bands for spin down).
+nbands = -n -> n empty bands? Cu has 11 valence
+
+ - smearing factor, occupations=FermiDirac(0.1) For calculations with periodic boundary conditions,
+ the default value is 0.1 eV and the total energies are extrapolated to T = 0 Kelvin.
+ For a molecule (no periodic boundaries) the default value is width=0, which gives integer occupation numbers.
+ Er dette temperatur? Default satt til 0.1 eV extrapolert til T = 0?
+
+- Med Atoms slik det står nå, er det faktisk 2 atomer? I fcc?
+
+- E_cutoff øker kjøretiden, pga. summen i resiprocal space? Hang ikke helt med på det.
+
+- Bruker PBE (som er GGA?). Burde jeg bruke en annen som er raskere(??). B3LYP hybrid? Hva er det?
+
+- Burde forvent at det konvergerer rasker mtp. k-points for flere atomer pga. Fourier-transform?
+
+- Kom i gang med Ase database?
+
+- Hva er veien videre for å bruker Stallo for større system?
+
+
+atoms = bulk("Cu")
+atoms = atoms*(2,1,1)
+
+GGA made simple Perdew
+
+DOS 1 atom
+
+ink2pdf

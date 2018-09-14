@@ -89,4 +89,11 @@ def plot_changing_param_vs_energy(start_iteration, end_iteration, increment, is_
 #plot_changing_param_vs_energy(2,12,1,False,True,False,False)
 
 
-plot_changing_param_vs_energy(2,9,1,False,True,False,False)
+#plot_changing_param_vs_energy(200,1200,100,True,False,False,False)
+b = 1.5
+bulk = Atoms([Atom('Cu', (0, 0, 0))],
+                      cell=np.array([[b, b, 0.0],
+                                               [0.0, b, b],
+                                               [b, 0.0, b]]), pbc = True).repeat((1, 2, 1))
+
+view(bulk)
