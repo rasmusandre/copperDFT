@@ -3,8 +3,81 @@ from __future__ import print_function
 from ase import Atoms, Atom
 from ase.visualize import view
 from gpaw import GPAW, PW, FermiDirac
+from ase_db import save_atoms, print_energies
 import matplotlib.pyplot as plt
 import numpy as np
+
+def create_calculator(ec, nb, x_c, k_pts, FD, name):
+    calc = GPAW(mode=PW(ec), nbands = nb, xc=x_c, kpts=(k_pts, k_pts, k_pts), occupations=FermiDirac(FD), txt=name + '.txt')
+    return calc
+
+def run_parameter_iterator():
+
+    start_iteration = 3.4
+    end_iteration = 3.81
+    increment = 0.04
+
+    st_lattice_cnst = 3.62
+    st_ec = 340
+    st_nb = -2
+    st_xc = 'PBE'
+    st_kpts = 8
+    st_FD = 0.1
+    is_varying = 'lattice_constant'
+
+    changing_parameter, energies =  parameter_iterator(start_iteration, end_iteration, increment, st_lattice_cnst, st_ec, st_nb, st_xc, st_kpts, st_FD, is_varying)
+
+    print_energies(is_varying)
+
+def parameter_iterator(start_iteration, end_iteration, increment, st_lattice_cnst, st_ec, st_nb, st_xc, st_kpts, st_FD, is_varying):
+
+    changing_parameter = []
+    energies = []
+    name = 'Cu-fcc'
+    k = start_iteration
+
+    while k <= end_iteration:
+
+        b = st_lattice_cnst/2
+
+        if is_varying == 'lattice_constant':
+            b = k/2
+
+
+        bulk = Atoms('Cu',cell=[[0, b, b],[b, 0, b],[b, b, 0]], pbc=True)
+
+        if is_varying == 'energy_cutoff':
+            calc = create_calculator(k, st_nb, st_xc, st_kpts, st_FD, name)
+        if is_varying == 'k_points':
+            calc = create_calculator(st_ec, st_nb, st_xc, k, st_FD, name)
+        if is_varying == 'smearing_factor':
+            calc = create_calculator(st_ec, st_nb, st_xc, st_kpts, k, name)
+        if is_varying == 'lattice_constant':
+            calc = create_calculator(st_ec, st_nb, st_xc, st_kpts, st_FD, name)
+
+        bulk.set_calculator(calc)
+        energy = bulk.get_potential_energy()
+        calc.write(name + '.gpw')
+
+        if is_varying == 'energy_cutoff':
+            save_atoms(bulk, k, st_nb, st_kpts, st_FD, st_lattice_cnst, is_varying)
+        if is_varying == 'k_points':
+            save_atoms(bulk, st_ec, st_nb, k, st_FD, st_lattice_cnst, is_varying)
+        if is_varying == 'smearing_factor':
+            save_atoms(bulk, st_ec, st_nb, st_kpts, k, st_lattice_cnst, is_varying)
+        if is_varying == 'lattice_constant':
+            save_atoms(bulk, k, st_nb, st_kpts, st_FD, b*2, is_varying)
+
+        print('Energy:', energy, 'eV')
+        if is_varying == 'lattice_constant':
+            changing_parameter.append(b*2)
+        else:
+            changing_parameter.append(k)
+        energies.append(energy)
+
+        k += increment
+
+    return changing_parameter, energies
 
 def the_parameter_changer(start_iteration, end_iteration, increment, is_ec, is_kpts, is_smear, is_lat_const):
 
@@ -42,7 +115,9 @@ def the_parameter_changer(start_iteration, end_iteration, increment, is_ec, is_k
         bulk.set_calculator(calc)
 
         energy = bulk.get_potential_energy()
+
         calc.write(name + '.gpw')
+
         print('Energy:', energy, 'eV')
         if is_lat_const:
             changing_parameter.append(b*2)
@@ -78,16 +153,11 @@ def plot_changing_param_vs_energy(start_iteration, end_iteration, increment, is_
 
     plt.xlabel(x_label)
     plt.ylabel('Energy, eV')
-    my_fig.savefig(x_label, bbox_inches='tight')
+    #my_fig.savefig(x_label, bbox_inches='tight')
     plt.show()
 
 #plot_changing_param_vs_energy(350,380,5,False,False,False,True)
 #plot_changing_param_vs_energy(2,12,1,False,True,False,False)
 #plot_changing_param_vs_energy(1,100,15,False,False,True)
 
-a = 3.61
-atoms = Atoms([Atom('Cu', (0, 0, 0))],
-              cell=0.5 * a * np.array([[1.0, 1.0, 0.0],
-                                       [0.0, 1.0, 1.0],
-                                       [1.0, 0.0, 1.0]])).repeat((1, 2, 1))
-view(atoms)
+run_parameter_iterator()
