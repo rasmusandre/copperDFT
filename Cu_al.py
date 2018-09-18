@@ -1,6 +1,7 @@
 """Bulk Cu(fcc) test"""
 from __future__ import print_function
 from ase import Atoms, Atom
+from ase.build import bulk
 from ase.visualize import view
 from gpaw import GPAW, PW, FermiDirac
 from ase_db import save_atoms, print_energies
@@ -13,9 +14,9 @@ def create_calculator(ec, nb, x_c, k_pts, FD, name):
 
 def run_parameter_iterator():
 
-    start_iteration = 3.4
-    end_iteration = 3.81
-    increment = 0.04
+    start_iteration = 3.2
+    end_iteration = 4.01
+    increment = 0.1
 
     st_lattice_cnst = 3.62
     st_ec = 340
@@ -41,10 +42,11 @@ def parameter_iterator(start_iteration, end_iteration, increment, st_lattice_cns
         b = st_lattice_cnst/2
 
         if is_varying == 'lattice_constant':
-            b = k/2
+            b = k/2 #DIVIDE BY TO FOR FCC!?
 
 
-        bulk = Atoms('Cu',cell=[[0, b, b],[b, 0, b],[b, b, 0]], pbc=True)
+        #bulk = Atoms('Cu',cell=[[0, b, b],[b, 0, b],[b, b, 0]], pbc=True)
+        bulk_mat = bulk('Cu', 'bcc', b*2)
 
         if is_varying == 'energy_cutoff':
             calc = create_calculator(k, st_nb, st_xc, st_kpts, st_FD, name)
@@ -55,18 +57,18 @@ def parameter_iterator(start_iteration, end_iteration, increment, st_lattice_cns
         if is_varying == 'lattice_constant':
             calc = create_calculator(st_ec, st_nb, st_xc, st_kpts, st_FD, name)
 
-        bulk.set_calculator(calc)
-        energy = bulk.get_potential_energy()
+        bulk_mat.set_calculator(calc)
+        energy = bulk_mat.get_potential_energy()
         calc.write(name + '.gpw')
 
         if is_varying == 'energy_cutoff':
-            save_atoms(bulk, k, st_nb, st_kpts, st_FD, st_lattice_cnst, is_varying)
+            save_atoms(bulk_mat, k, st_nb, st_kpts, st_FD, st_lattice_cnst, is_varying)
         if is_varying == 'k_points':
-            save_atoms(bulk, st_ec, st_nb, k, st_FD, st_lattice_cnst, is_varying)
+            save_atoms(bulk_mat, st_ec, st_nb, k, st_FD, st_lattice_cnst, is_varying)
         if is_varying == 'smearing_factor':
-            save_atoms(bulk, st_ec, st_nb, st_kpts, k, st_lattice_cnst, is_varying)
+            save_atoms(bulk_mat, st_ec, st_nb, st_kpts, k, st_lattice_cnst, is_varying)
         if is_varying == 'lattice_constant':
-            save_atoms(bulk, k, st_nb, st_kpts, st_FD, b*2, is_varying)
+            save_atoms(bulk_mat, k, st_nb, st_kpts, st_FD, b*2, is_varying)
 
         print('Energy:', energy, 'eV')
         if is_varying == 'lattice_constant':

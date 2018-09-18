@@ -1,6 +1,6 @@
 from ase.db import connect
 from ase import Atoms
-from ase.lattice import bulk
+from ase.build import bulk
 from ase.visualize import view
 import matplotlib.pyplot as plt
 
@@ -15,12 +15,12 @@ import matplotlib.pyplot as plt
 
 def save_atoms(my_atoms, E_c, Nbands, Kpts, Fermi_dirac, Lattice_constant, Is_varying):
 
-    db = connect('single_cu.db')
+    db = connect('single_cu_bcc.db')
     db.write(my_atoms, energy_cutoff = E_c, nbands = Nbands, k_points = Kpts, smearing_factor = Fermi_dirac, lattice_constant = Lattice_constant, is_varying = Is_varying)
 
 def print_energies(Is_varying):
 
-    db = connect('single_cu.db')
+    db = connect('single_cu_bcc.db')
     print('The changing parameter is ' + Is_varying)
     for obj in db.select(is_varying = Is_varying):
 
@@ -34,14 +34,14 @@ def print_energies(Is_varying):
 def db_deleter():
 
     param = 'lattice_constant'
-    db = connect('single_cu.db')
+    db = connect('single_cu_bcc.db')
     for obj in db.select(is_varying = param):
 
         del db[obj.id]
 
-def plot_from_db(Is_varying):
+def plot_from_db(Is_varying, database_name):
 
-    db = connect('single_cu.db')
+    db = connect(database_name)
     energies = []
     changing_parameter = []
     for obj in db.select(is_varying = Is_varying):
@@ -50,14 +50,19 @@ def plot_from_db(Is_varying):
         changing_parameter.append(obj[Is_varying])
 
     plt.figure(0)
-    plt.semilogx(changing_parameter, energies)
-    plt.semilogx(changing_parameter, energies, '*')
+    if Is_varying == 'lattice_constant':
+        plt.plot(changing_parameter, energies)
+        plt.plot(changing_parameter, energies, '*')
+    else:
+        plt.semilogx(changing_parameter, energies)
+        plt.semilogx(changing_parameter, energies, '*')
     plt.ylabel('Potential Energy, eV')
     plt.xlabel(Is_varying)
-    plt.show()
+    #plt.show()
 
-#plot_from_db('lattice_constant')
-b = 2
-bulk = Atoms('Cu',cell=[[0, b, b],[b, 0, b],[b, b, 0]], pbc=True)*(3,3,3)
-bulk = bulk('Cu', 'fcc', a=3.6)
-view(bulk)
+#db_deleter()
+plot_from_db('lattice_constant', 'single_cu_bcc.db')
+plot_from_db('lattice_constant', 'single_cu.db')
+plt.show()
+#bulk = bulk('Cu', 'fcc', a=3.6)
+#view(bulk)
