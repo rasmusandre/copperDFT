@@ -5,22 +5,14 @@ from ase.visualize import view
 import matplotlib.pyplot as plt
 
 
-#bulk.get_potential_energy()
-
-#db.write(bulk, my_id = 'my_id2')
-
-#row = db.get(my_id = 'my_id2')
-
-#print(row['energy'])
-
 def save_atoms(my_atoms, E_c, Nbands, Kpts, Fermi_dirac, Lattice_constant, Is_varying):
 
-    db = connect('single_cu_bcc.db')
+    db = connect('single_cu_xc_LDA2.db')
     db.write(my_atoms, energy_cutoff = E_c, nbands = Nbands, k_points = Kpts, smearing_factor = Fermi_dirac, lattice_constant = Lattice_constant, is_varying = Is_varying)
 
 def print_energies(Is_varying):
 
-    db = connect('single_cu_bcc.db')
+    db = connect('single_cu.db')
     print('The changing parameter is ' + Is_varying)
     for obj in db.select(is_varying = Is_varying):
 
@@ -29,7 +21,7 @@ def print_energies(Is_varying):
         print('The energy is ' + str(obj['energy']))
 
 
-#print_energies('kpts')
+
 
 def db_deleter():
 
@@ -59,10 +51,21 @@ def plot_from_db(Is_varying, database_name):
     plt.ylabel('Potential Energy, eV')
     plt.xlabel(Is_varying)
     #plt.show()
+    return energies, changing_parameter
+
+
+def show_min_lc():
+    en_lda, cp_lda = plot_from_db('lattice_constant', 'single_cu_xc_LDA2.db')
+    en_pbe, cp_pbe = plot_from_db('lattice_constant', 'single_cu_xc_PBE.db')
+    print(cp_lda[en_lda.index(min(en_lda))])
+    print(cp_pbe[en_pbe.index(min(en_pbe))])
+
 
 #db_deleter()
-plot_from_db('lattice_constant', 'single_cu_bcc.db')
-plot_from_db('lattice_constant', 'single_cu.db')
-plt.show()
-#bulk = bulk('Cu', 'fcc', a=3.6)
+#plot_from_db('energy_cutoff', 'single_cu.db')
+#plt.show()
+#plot_from_db('lattice_constant', 'single_cu_xc_PBE.db')
+#plt.show()
+#plt.show()
+#bulk = bulk('Cu', 'fcc', a=3.6)*(4,4,4)
 #view(bulk)

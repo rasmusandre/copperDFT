@@ -1,0 +1,19 @@
+from __future__ import print_function
+from ase import Atoms, Atom
+from ase.build import bulk
+from ase.visualize import view
+from gpaw import GPAW, PW, FermiDirac
+from ase_db import save_atoms, print_energies
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+a = 3.62
+
+bulk_mat = bulk('Cu','fcc',a)
+
+calc = GPAW(mode=PW(340), nbands = -2, xc='PBE', kpts=(8,8,8), occupations=FermiDirac(0.1), txt='Cu.out')
+
+bulk_mat.set_calculator(calc)
+bulk_mat.get_potential_energy()
+calc.write('Cu.gpw')
