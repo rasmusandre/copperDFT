@@ -1,0 +1,7 @@
+Potential energy for the bulk of 64 atoms is -3.4*64
+potential energy for one atom in same size cell is -0.01906
+
+E_c = 64*-0.01906 - (-3.4*64) = 3.38*64 ev/atom
+e_c = 3.38 ev/atom
+
+e_c_kittel = 3.49 ev/atom

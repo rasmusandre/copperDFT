@@ -7,7 +7,7 @@ import sys
 
 def save_atoms(my_atoms, E_c, Nbands, Kpts, Fermi_dirac, Lattice_constant, Is_varying):
 
-    db = connect('cu_test.db')
+    db = connect('cu_kpts.db')
     db.write(my_atoms, energy_cutoff = E_c,
              nbands = Nbands, k_points = Kpts,
              smearing_factor = Fermi_dirac,
@@ -17,17 +17,21 @@ def save_atoms(my_atoms, E_c, Nbands, Kpts, Fermi_dirac, Lattice_constant, Is_va
 if __name__ == "__main__":
 
     a = 3.62
-    e_cut = 650
-    nbands = -8
+    e_cut = int(sys.argv[1])
+    nbands = int(sys.argv[2])
     xc = 'PBE'
-    k_pts = sys.argv[1]
+    k_pts = sys.argv[3]
     k_pts = int(k_pts)
-    smear = 0.1
+    smear = float(sys.argv[4])
 
 
-    atoms = sys.argv[2]
+    atoms = sys.argv[5]
     atoms = int(atoms)
     bulk_mat = bulk('Cu','fcc',a)*(atoms,atoms,atoms)
+
+    is_varying = str(sys.argv[6])
+
+
 
     calc = GPAW(mode=PW(e_cut), nbands = nbands,
                 xc='PBE', kpts=(k_pts,k_pts,k_pts),
@@ -36,4 +40,4 @@ if __name__ == "__main__":
     bulk_mat.set_calculator(calc)
     bulk_mat.get_potential_energy()
     calc.write('Cu.gpw')
-    save_atoms(bulk_mat, e_cut, nbands, k_pts, smear, a, 'energy_cutoff')
+    save_atoms(bulk_mat, e_cut, nbands, k_pts, smear, a, is_varying)

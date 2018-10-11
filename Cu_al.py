@@ -14,17 +14,17 @@ def create_calculator(ec, nb, x_c, k_pts, FD, name):
 
 def run_parameter_iterator():
 
-    start_iteration = 3.51
-    end_iteration = 3.54
-    increment = 0.001
+    start_iteration = 600
+    end_iteration = 601
+    increment = 2
 
     st_lattice_cnst = 3.62
     st_ec = 600
     st_nb = -2
-    st_xc = 'LDA'
-    st_kpts = 8
+    st_xc = 'PBE'
+    st_kpts = 9
     st_FD = 0.1
-    is_varying = 'lattice_constant'
+    is_varying = 'energy_cutoff'
 
     changing_parameter, energies =  parameter_iterator(start_iteration, end_iteration, increment, st_lattice_cnst, st_ec, st_nb, st_xc, st_kpts, st_FD, is_varying)
 
@@ -44,7 +44,8 @@ def parameter_iterator(start_iteration, end_iteration, increment, st_lattice_cns
         if is_varying == 'lattice_constant':
             b = k
 
-        bulk_mat = bulk('Cu', 'fcc', b)
+        bulk_mat = bulk('Cu', 'fcc', b)#*(4,4,4)
+        #del bulk_mat[[atom.index for atom in bulk_mat if atom.index != 45]]
 
         if is_varying == 'energy_cutoff':
             calc = create_calculator(k, st_nb, st_xc, st_kpts, st_FD, name)
@@ -61,14 +62,14 @@ def parameter_iterator(start_iteration, end_iteration, increment, st_lattice_cns
         energy = bulk_mat.get_potential_energy()
         calc.write(name + '.gpw')
 
-        if is_varying == 'energy_cutoff':
-            save_atoms(bulk_mat, k, st_nb, st_kpts, st_FD, st_lattice_cnst, is_varying)
-        if is_varying == 'k_points':
-            save_atoms(bulk_mat, st_ec, st_nb, k, st_FD, st_lattice_cnst, is_varying)
-        if is_varying == 'smearing_factor':
-            save_atoms(bulk_mat, st_ec, st_nb, st_kpts, k, st_lattice_cnst, is_varying)
-        if is_varying == 'lattice_constant':
-            save_atoms(bulk_mat, k, st_nb, st_kpts, st_FD, b, is_varying)
+        # if is_varying == 'energy_cutoff':
+        #     save_atoms(bulk_mat, k, st_nb, st_kpts, st_FD, st_lattice_cnst, is_varying)
+        # if is_varying == 'k_points':
+        #     save_atoms(bulk_mat, st_ec, st_nb, k, st_FD, st_lattice_cnst, is_varying)
+        # if is_varying == 'smearing_factor':
+        #     save_atoms(bulk_mat, st_ec, st_nb, st_kpts, k, st_lattice_cnst, is_varying)
+        # if is_varying == 'lattice_constant':
+        #     save_atoms(bulk_mat, k, st_nb, st_kpts, st_FD, b, is_varying)
 
         print('Energy:', energy, 'eV')
         print('Lattice constant: ', b)
