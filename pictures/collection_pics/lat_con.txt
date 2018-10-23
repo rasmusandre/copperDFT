@@ -1,0 +1,4 @@
+experimental: 3.614
+LDA: 3.528
+PBE: 3.640
+BLYP: 3.703

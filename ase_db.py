@@ -8,7 +8,7 @@ import numpy as np
 
 def save_atoms(my_atoms, E_c, Nbands, Kpts, Fermi_dirac, Lattice_constant, Is_varying):
 
-    db = connect('single_cu_xc_PBE2.db')
+    db = connect('single_cu2.db')
     db.write(my_atoms, energy_cutoff = E_c, nbands = Nbands, k_points = Kpts, smearing_factor = Fermi_dirac, lattice_constant = Lattice_constant, is_varying = Is_varying)
 
 def print_energies(Is_varying):
@@ -68,27 +68,44 @@ def plot_from_db_two_db(Is_varying, database_name1, database_name2):
     for obj in db1.select(is_varying = Is_varying):
 
         energies1.append(obj['energy']/amt1.get_number_of_atoms())
-        changing_parameter1.append((obj[Is_varying])**3)
+        changing_parameter1.append((obj[Is_varying]))
 
     plt.figure(0)
 
-
-    plt.semilogx(changing_parameter1, energies1,'b')
-    plt.semilogx(changing_parameter1, energies1, 'bo',label='_nolegend_')
+    if (Is_varying == 'k_points'):
+        plt.semilogx(changing_parameter1, energies1,'b')
+        plt.semilogx(changing_parameter1, energies1, 'bo',label='_nolegend_')
+    else:
+        if (Is_varying == 'smearing_factor'):
+            plt.plot([k/(8.62*10**-5) for k in changing_parameter1], energies1,'b')
+            plt.plot([k/(8.62*10**-5) for k in changing_parameter1], energies1, 'bo',label='_nolegend_')
+        else:
+            plt.plot(changing_parameter1, energies1,'b')
+            plt.plot(changing_parameter1, energies1, 'bo',label='_nolegend_')
 
     for obj in db2.select(is_varying = Is_varying):
 
         energies2.append(obj['energy']/amt2.get_number_of_atoms())
 
-        changing_parameter2.append((obj[Is_varying])**3)
+        changing_parameter2.append((obj[Is_varying]))
 
 
+    if (Is_varying == 'k_points'):
+        plt.semilogx(changing_parameter2, energies2,'r')
+        plt.semilogx(changing_parameter2, energies2, 'r+',label='_nolegend_')
+        plt.xlabel('number of k-points')
+    else:
+        if (Is_varying == 'smearing_factor'):
+            plt.plot([k/(8.62*10**-5) for k in changing_parameter2], energies2,'r')
+            plt.plot([k/(8.62*10**-5) for k in changing_parameter2], energies2, 'r+',label='_nolegend_')
+            plt.xlabel('smearing factor [K]')
+        else:
+            plt.plot(changing_parameter2, energies2,'r')
+            plt.plot(changing_parameter2, energies2, 'r+',label='_nolegend_')
+            plt.xlabel(r'$E_{cut}$'+' [eV]')
 
-    plt.semilogx(changing_parameter2, energies2,'r')
-    plt.semilogx(changing_parameter2, energies2, 'ro',label='_nolegend_')
 
     plt.ylabel('Potential energy [eV/atom]')
-    plt.xlabel('number of k-points')
     plt.legend(['1 atom', '64 atoms'],fancybox=True, framealpha=1,shadow=True,prop={'size': 10})
     plt.grid(True)
     #plt.show()
@@ -98,11 +115,34 @@ def plot_from_db_two_db(Is_varying, database_name1, database_name2):
 def show_min_lc():
     en_lda, cp_lda = plot_from_db('lattice_constant', 'single_cu_xc_LDA2.db')
     en_pbe, cp_pbe = plot_from_db('lattice_constant', 'single_cu_xc_PBE.db')
+    en_blyp, cp_blyp = plot_from_db('lattice_constant', 'single_cu_xc_BLYP2.db')
+    print('The min values in the dataset are:')
     print(cp_lda[en_lda.index(min(en_lda))])
     print(cp_pbe[en_pbe.index(min(en_pbe))])
+    print(cp_blyp[en_blyp.index(min(en_blyp))])
+    print('The min values in the fit are: ')
+    cp_pbe = [i**3 for i in cp_pbe]
+    ldav = np.polyfit(cp_lda, en_lda, 2)
+    pbev = np.polyfit(cp_pbe, en_pbe, 2)
+    blypv = np.polyfit(cp_blyp, en_blyp, 2)
+    print(pbev)
+    ldav = np.polyder(ldav)
+    pbev = np.polyder(pbev)
+    blypv = np.polyder(blypv)
+    print(np.roots(ldav))
+    print(np.roots(pbev))
+    print(np.roots(blypv))
+    #print(np.polyder(pbev))
 
-#plot_from_db_two_db('k_points','single_cu.db','cu_kpts.db')
-#plot_from_db('k_points', 'cu_kpts.db')
+
+
+
+#plot_from_db_two_db('smearing_factor','single_cu2.db','cu_kpts.db')
+#plot_from_db('k_points','single_cu_smear.db')
+#plt.show()
+#plot_from_db('lattice_constant', 'single_cu_xc_BLYP.db')
+#plt.show()
+show_min_lc()
 #plt.savefig('my_fig.png')
 #plot_from_db('lattice_constant', 'single_cu_xc_LDA2.db')
 #plt.show()
