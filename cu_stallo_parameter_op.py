@@ -5,9 +5,9 @@ from gpaw import GPAW, PW, FermiDirac
 import sys
 
 
-def save_atoms(my_atoms, E_c, Nbands, Kpts, Fermi_dirac, Lattice_constant, Is_varying):
+def save_atoms(my_atoms, E_c, Nbands, Kpts, Fermi_dirac, Lattice_constant, Is_varying, database):
 
-    db = connect('cu_kpts.db')
+    db = connect(database)
     db.write(my_atoms, energy_cutoff = E_c,
              nbands = Nbands, k_points = Kpts,
              smearing_factor = Fermi_dirac,
@@ -40,4 +40,4 @@ if __name__ == "__main__":
     bulk_mat.set_calculator(calc)
     bulk_mat.get_potential_energy()
     calc.write('Cu.gpw')
-    save_atoms(bulk_mat, e_cut, nbands, k_pts, smear, a, is_varying)
+    save_atoms(bulk_mat, e_cut, nbands, k_pts, smear, a, is_varying, str(sys.argv[7]))

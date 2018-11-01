@@ -153,7 +153,7 @@ def show_min_lc():
 
 #del bulk_mat[[atom.index for atom in bulk_mat if atom.index != 45]]
 #view(bulk_mat)
-names = ['cu_vacancy_db.db', 'cu_vacancy_63db.db']
+names = ['cu_vacancy_64db.db', 'cu_vacancy_63db.db']
 Is_varying = 'energy_cutoff'
 energies = []
 for name in names:
