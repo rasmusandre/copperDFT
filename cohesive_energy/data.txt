@@ -1,7 +1,18 @@
+
+Non-relaxed:
+
 Potential energy for the bulk of 64 atoms is -3.4*64
 potential energy for one atom in same size cell is -0.01906
 
 E_c = 64*-0.01906 - (-3.4*64) = 3.38*64 ev/atom
 e_c = 3.38 ev/atom
+
+Relaxed: (64 atom system, ec = 600, nbands = -8, kpts = 3, smear = 0.1)
+
+Potential energy bulk of 65 atoms is -233.845
+Potential energy one atom in same size cell is -0.019
+
+E_c = 64*(-0.019) - (-233.845) = 232.629 eV
+e_c = 3.63 ev/atom
 
 e_c_kittel = 3.49 ev/atom
