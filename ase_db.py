@@ -138,8 +138,8 @@ def show_min_lc():
 
 
 #plot_from_db_two_db('smearing_factor','single_cu2.db','cu_kpts.db')
-#plot_from_db('energy_cutoff','cu_vacancy_db.db')
-#plt.show()
+plot_from_db('lattice_constant','single_cu.db')
+plt.show()
 #plt.show()
 #plot_from_db('lattice_constant', 'single_cu_xc_BLYP.db')
 #plt.show()
@@ -153,19 +153,19 @@ def show_min_lc():
 
 #del bulk_mat[[atom.index for atom in bulk_mat if atom.index != 45]]
 #view(bulk_mat)
-names = ['cu_vacancy_db.db', 'cu_vacancy_63db.db']
-Is_varying = 'energy_cutoff'
-energies = []
-for name in names:
-
-    db = connect(name)
-
-    for obj in db.select(is_varying = Is_varying):
-
-        print('The energy is ' + str(obj['energy']))
-        energies.append(float(obj['energy']))
-
-print(energies[1]-(63/64)*energies[0])
+# names = ['cu_vacancy_db.db', 'cu_vacancy_63db.db']
+# Is_varying = 'energy_cutoff'
+# energies = []
+# for name in names:
+#
+#     db = connect(name)
+#
+#     for obj in db.select(is_varying = Is_varying):
+#
+#         print('The energy is ' + str(obj['energy']))
+#         energies.append(float(obj['energy']))
+#
+# print(energies[1]-(63/64)*energies[0])
 
 
 
