@@ -11,15 +11,15 @@ def save_atoms(my_atoms, small_q, big_q, Omega_kn, Point_names, Dos_e, Omega_e):
 
 # Setup crystal and EMT calculator
 atoms = bulk('Cu', 'fcc', a=3.62)
-calc = GPAW(mode=PW(600), nbands = -2, xc='PBE', kpts=(5,5,5), occupations=FermiDirac(0.1))
-
-# Phonon calculator
-N = 4
+calc = GPAW(mode=PW(600), nbands = -60, xc='PBE', kpts=(5,5,5), symmetry={'point_group': False}, occupations=FermiDirac(0.1))
+#
+# # Phonon calculator
+N = 3
 ph = Phonons(atoms, calc, supercell=(N, N, N), delta=0.05)
-ph.run()
+#ph.run()
 
 # Read forces and assemble the dynamical matrix
-ph.read(acoustic=True)
+ph.read()
 
 # High-symmetry points in the Brillouin zone
 points = ibz_points['fcc']

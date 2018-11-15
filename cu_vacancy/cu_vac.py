@@ -39,8 +39,8 @@ if __name__ == "__main__":
 
         del bulk_mat[[atom.index for atom in bulk_mat if atom.index == 0]]
 
-    view(bulk_mat)
-    time.sleep(3600)
+    #view(bulk_mat)
+    #time.sleep(3600)
     calc = GPAW(mode=PW(e_cut), nbands = nbands,
                 xc='PBE', kpts=(k_pts,k_pts,k_pts),
                 occupations=FermiDirac(smear), txt='Cu.out')
