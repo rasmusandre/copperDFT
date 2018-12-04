@@ -35,7 +35,8 @@ def create_plt(database):
     plt.xticks(Q, point_names, fontsize=18)
     plt.yticks(fontsize=18)
     plt.xlim(q[0], q[-1])
-    plt.ylabel("Frequency ($\mathrm{meV}$)", fontsize=22)
+    plt.ylim(0, 35)
+    plt.ylabel("Energy ($\mathrm{meV}$)", fontsize=22)
     plt.grid('on')
 
     plt.axes([.8, .07, .17, .85])
@@ -75,7 +76,7 @@ def deb_plot(omegas, dos):
     speed_cu = (bm_cu/dens_cu)**(1/2)
     speed_fe = (bm_fe/dens_fe)**(1/2)
 
-    plancks = 1.054*10**-34
+    plancks = 1.054*10**-34 # reduced
     ev = 1.6*10**-19
     boltzmann = 1.38*10**-23
 
@@ -85,12 +86,9 @@ def deb_plot(omegas, dos):
     omegas_ang = [w*ev/(plancks*1000) for w in omegas]
     dos_deb = [w**2 for w in omegas_ang]
 
-    omegas_deb = [w for w in omegas_ang if w < deb_freq_fe]
+    omegas_deb = [w for w in omegas_ang if w < deb_freq_cu]
     dos_deb = dos_deb[:len(omegas_deb)]
     dos_deb[-1] = 0
-    #normalization_factor = np.max(dos)/np.max(dos_deb)
-
-    #dos_deb = [i*normalization_factor for i in dos_deb]
 
     int_dos = integrate.simps(dos, omegas_ang)
     int_dos_deb = integrate.simps(dos_deb, omegas_deb)
@@ -109,5 +107,5 @@ def deb_plot(omegas, dos):
 
 
 
-db = 'fe_phon_band.db'
+db = 'cu_phon_band.db'
 create_plt(db)
